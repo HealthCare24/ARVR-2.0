@@ -69,7 +69,7 @@ def receive_coordinates():
 
     print("Normalized video coordinates:", normalized_video_coords)
     print("Filtered model coordinates:", filtered_model_coords)
-    similarity_percentage =0.95
+    similarity_percentage =95
 
     # Commenting out similarity calculation for now
     # similarity_percentage = calculate_similarity(normalized_video_coords, filtered_model_coords)
