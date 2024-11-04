@@ -12,5 +12,5 @@
       "dest": "server.py"
     }
   ],
-  "start": "python server.py"
+  
 }
