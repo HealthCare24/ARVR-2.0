@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
-import { AnimationMixer } from 'three';
+import { AnimationMixer, Vector3 } from 'three';
 import './App.css';
 
 const Model = ({ url, position, visible, setModelCoordinates }) => {
@@ -16,16 +16,18 @@ const Model = ({ url, position, visible, setModelCoordinates }) => {
       });
     }
 
-    // Function to extract bone joint coordinates
+    // Function to extract bone joint coordinates using matrixWorld
     const extractBoneJointCoordinates = () => {
       const coordinates = [];
       scene.traverse((child) => {
-        if (child.isBone) { // Check if the child is a bone
-          const { position } = child; // Get the position of the bone
-          coordinates.push([position.x, position.y, position.z]); // Push the coordinates to the array
+        if (child.isBone) {
+          const worldPosition = new Vector3();
+          child.updateMatrixWorld(true); // Ensure matrixWorld is up-to-date
+          worldPosition.setFromMatrixPosition(child.matrixWorld); // Extract position from matrixWorld
+          coordinates.push([worldPosition.x, worldPosition.y, worldPosition.z]);
         }
       });
-      setModelCoordinates(coordinates); // Set the extracted coordinates to the state
+      setModelCoordinates(coordinates);
     };
 
     // Call to extract initial coordinates
@@ -94,9 +96,9 @@ function App() {
         const data = await response.json();
         console.log('Similarity Percentage:', data.similarity); // Log similarity percentage
         setSimilarity(data["similarity"]); // Update similarity state
-        console.log("rcvd model:");
+        console.log("Received model coordinates:");
         console.log(data.filtered_model_coordinates);
-        console.log("rcvd video:");
+        console.log("Received video coordinates:");
         console.log(data.filtered_video_coordinates);
       } catch (error) {
         console.error('Error sending coordinates:', error);
